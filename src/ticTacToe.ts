@@ -118,18 +118,22 @@ class TicTacToe {
   }
 }
 
-const p1 = new Player("o");
-const p2 = new Player("x");
-const ttt = new TicTacToe(3, 3, [p1, p2]);
-ttt.turn([0, 0]);
-ttt.turn([1, 0]);
-ttt.turn([1, 1]);
-ttt.turn([1, 2]);
-ttt.turn([2, 2]);
-console.log(ttt.board);
-// ttt.turn([0, 0]);
-// console.log(ttt.board);
-// ttt.turn([1, 1]);
-// console.log(ttt.board);
-// ttt.turn([0, 1]);
-// console.log(ttt.board);
+function main() {
+  const p1 = new Player("o");
+  const p2 = new Player("x");
+  const ttt = new TicTacToe(3, 3, [p1, p2]);
+  ttt.turn([0, 0]);
+  ttt.turn([1, 0]);
+  ttt.turn([1, 1]);
+  ttt.turn([1, 2]);
+  ttt.turn([2, 2]);
+  console.log(ttt.board);
+  // ttt.turn([0, 0]);
+  // console.log(ttt.board);
+  // ttt.turn([1, 1]);
+  // console.log(ttt.board);
+  // ttt.turn([0, 1]);
+  // console.log(ttt.board);
+}
+
+main();
