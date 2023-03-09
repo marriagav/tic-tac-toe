@@ -22,6 +22,7 @@ interface TicTacToe {
   players: Player[];
   turnIndex: number;
   board: string[][];
+  turnCount: number;
 }
 
 class TicTacToe {
@@ -31,6 +32,7 @@ class TicTacToe {
     this.players = players;
     this.turnIndex = 0;
     this.board = [];
+    this.turnCount = 0;
     this.buildBoard();
   }
   buildBoard() {
@@ -48,24 +50,34 @@ class TicTacToe {
       turn
     );
     if (resultOfTurn != -1) {
+      this.turnCount += 1;
       this.board = resultOfTurn;
       this.turnIndex++;
       if (this.turnIndex >= this.players.length) {
         this.turnIndex = 0;
       }
-      this.checkForWin(player);
+      if (this.checkForWin(player)) {
+        this.playerHasWon(player);
+      }
+      if (this.turnCount >= this.rows * this.columns) {
+        this.gameTie();
+      }
     }
   }
   private checkForWin(player: Player) {
+    // * note: could be improved grately with memoization / DP
     const columnsAndDiagonals = this.buildColumnMatrixAndDiagonals();
     const columnMatrix = columnsAndDiagonals[0];
     const diagonals = columnsAndDiagonals[1];
+    let matchedArray: boolean[] = [];
     const matchedRow = this.iterateAndFind(this.board, player.symbol);
     const matchedColumn = this.iterateAndFind(columnMatrix, player.symbol);
     const matchedDiagonal = this.iterateAndFind(diagonals, player.symbol);
-    console.log(matchedRow);
-    console.log(matchedColumn);
-    console.log(matchedDiagonal);
+    matchedArray.push(matchedRow);
+    matchedArray.push(matchedColumn);
+    matchedArray.push(matchedDiagonal);
+    const hasWon = matchedArray.find((subarray) => subarray);
+    return hasWon == true;
   }
   private iterateAndFind(matrix: string[][], symbol: string) {
     const matchedRow = matrix.find((row) => {
@@ -92,6 +104,17 @@ class TicTacToe {
     diagonalArray.push(diagonal1);
     diagonalArray.push(diagonal2);
     return [columnMatrix, diagonalArray];
+  }
+  private playerHasWon(player: Player) {
+    // todo: player has won
+    this.finishGame();
+  }
+  private gameTie() {
+    // todo: theres been a tie
+    this.finishGame();
+  }
+  private finishGame() {
+    //todo: finish game
   }
 }
 
