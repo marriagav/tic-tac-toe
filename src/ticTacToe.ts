@@ -16,6 +16,11 @@ class Player {
   }
 }
 
+// interface Cell {
+//   row: number;
+//   column: number;
+//   element: Element;
+// }
 interface TicTacToe {
   columns: number;
   rows: number;
@@ -23,6 +28,8 @@ interface TicTacToe {
   turnIndex: number;
   board: string[][];
   turnCount: number;
+  gameHasEnded: boolean;
+  winner: Player;
 }
 
 class TicTacToe {
@@ -33,6 +40,7 @@ class TicTacToe {
     this.turnIndex = 0;
     this.board = [];
     this.turnCount = 0;
+    this.gameHasEnded = false;
     this.buildBoard();
   }
   buildBoard() {
@@ -45,10 +53,7 @@ class TicTacToe {
   }
   turn(turn: number[]) {
     const player = this.players[this.turnIndex];
-    const resultOfTurn = this.players[this.turnIndex].takeTurn(
-      this.board,
-      turn
-    );
+    const resultOfTurn = player.takeTurn(this.board, turn);
     if (resultOfTurn != -1) {
       this.turnCount += 1;
       this.board = resultOfTurn;
@@ -58,11 +63,15 @@ class TicTacToe {
       }
       if (this.checkForWin(player)) {
         this.playerHasWon(player);
+        return `"w"${player.symbol}`;
       }
       if (this.turnCount >= this.rows * this.columns) {
         this.gameTie();
+        return "t";
       }
+      return player.symbol;
     }
+    return "-1";
   }
   private checkForWin(player: Player) {
     // * note: could be improved grately with memoization / DP
@@ -106,7 +115,7 @@ class TicTacToe {
     return [columnMatrix, diagonalArray];
   }
   private playerHasWon(player: Player) {
-    // todo: player has won
+    this.winner = player;
     this.finishGame();
   }
   private gameTie() {
@@ -114,26 +123,57 @@ class TicTacToe {
     this.finishGame();
   }
   private finishGame() {
-    //todo: finish game
+    this.gameHasEnded = true;
   }
 }
 
 function main() {
-  const p1 = new Player("o");
-  const p2 = new Player("x");
+  const status = document.querySelector(".status");
+  const restart = document.querySelector(".restart");
+  const board = document.querySelector(".board");
+  const p1 = new Player("O");
+  const p2 = new Player("X");
   const ttt = new TicTacToe(3, 3, [p1, p2]);
-  ttt.turn([0, 0]);
-  ttt.turn([1, 0]);
-  ttt.turn([1, 1]);
-  ttt.turn([1, 2]);
-  ttt.turn([2, 2]);
-  console.log(ttt.board);
-  // ttt.turn([0, 0]);
-  // console.log(ttt.board);
-  // ttt.turn([1, 1]);
-  // console.log(ttt.board);
-  // ttt.turn([0, 1]);
-  // console.log(ttt.board);
+
+  let cells: Element[] = [];
+
+  for (let i = 0; i < ttt.rows; i++) {
+    for (let j = 0; j < ttt.columns; j++) {
+      const physical = document.createElement("button");
+      cells.push(physical);
+      physical.addEventListener("click", (e: Event) =>
+        clickEvents(e, i, j, physical)
+      );
+      board?.appendChild(physical);
+    }
+  }
+
+  function clickEvents(e: Event, i: number, j: number, physical: Element) {
+    const text = ttt.turn([i, j]);
+    if (text.includes("t")) {
+      physical.textContent = text;
+      status.textContent = "It is a tie!";
+      physical.removeEventListener("click", (e: Event) => clickEvents);
+    } else if (text.includes("w")) {
+      const text2 = text.replace("w", "");
+      console.log(text2);
+      physical.textContent = text2;
+      status.textContent = `Player ${text2} wins!`;
+      physical.removeEventListener("click", (e: Event) => clickEvents);
+    } else if (text != "-1") {
+      physical.textContent = text;
+      status.textContent = `Player ${ttt.players[ttt.turnIndex].symbol} turn`;
+    }
+  }
+
+  restart.addEventListener("click", (e) => {
+    for (const cell of cells) {
+      cell.remove();
+    }
+    status.textContent = "Start the game";
+    // cells = [];
+    // main();
+  });
 }
 
 main();
