@@ -44,11 +44,11 @@ var TicTacToe = /** @class */ (function () {
             }
             if (this.checkForWin(player)) {
                 this.playerHasWon(player);
-                return "\"w\"".concat(player.symbol);
+                return "w".concat(player.symbol);
             }
             if (this.turnCount >= this.rows * this.columns) {
                 this.gameTie();
-                return "t";
+                return "t".concat(player.symbol);
             }
             return player.symbol;
         }
@@ -135,7 +135,8 @@ function main() {
     function clickEvents(e, i, j, physical) {
         var text = ttt.turn([i, j]);
         if (text.includes("t")) {
-            physical.textContent = text;
+            var text2 = text.replace("t", "");
+            physical.textContent = text2;
             status.textContent = "It is a tie!";
             physical.removeEventListener("click", function (e) { return clickEvents; });
         }
@@ -154,9 +155,12 @@ function main() {
     restart.addEventListener("click", function (e) {
         for (var _i = 0, cells_1 = cells; _i < cells_1.length; _i++) {
             var cell = cells_1[_i];
-            cell.remove();
+            cell.textContent = "";
         }
         status.textContent = "Start the game";
+        p1 = new Player("O");
+        p2 = new Player("X");
+        ttt = new TicTacToe(3, 3, [p1, p2]);
         // cells = [];
         // main();
     });

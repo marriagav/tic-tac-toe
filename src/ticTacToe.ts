@@ -63,11 +63,11 @@ class TicTacToe {
       }
       if (this.checkForWin(player)) {
         this.playerHasWon(player);
-        return `"w"${player.symbol}`;
+        return `w${player.symbol}`;
       }
       if (this.turnCount >= this.rows * this.columns) {
         this.gameTie();
-        return "t";
+        return `t${player.symbol}`;
       }
       return player.symbol;
     }
@@ -131,9 +131,9 @@ function main() {
   const status = document.querySelector(".status");
   const restart = document.querySelector(".restart");
   const board = document.querySelector(".board");
-  const p1 = new Player("O");
-  const p2 = new Player("X");
-  const ttt = new TicTacToe(3, 3, [p1, p2]);
+  let p1 = new Player("O");
+  let p2 = new Player("X");
+  let ttt = new TicTacToe(3, 3, [p1, p2]);
 
   let cells: Element[] = [];
 
@@ -151,15 +151,17 @@ function main() {
   function clickEvents(e: Event, i: number, j: number, physical: Element) {
     const text = ttt.turn([i, j]);
     if (text.includes("t")) {
-      physical.textContent = text;
+      const text2 = text.replace("t", "");
+      physical.textContent = text2;
       status.textContent = "It is a tie!";
-      physical.removeEventListener("click", (e: Event) => clickEvents);
+      // physical.removeEventListener("click", (e: Event) => clickEvents);
     } else if (text.includes("w")) {
       const text2 = text.replace("w", "");
       console.log(text2);
       physical.textContent = text2;
       status.textContent = `Player ${text2} wins!`;
-      physical.removeEventListener("click", (e: Event) => clickEvents);
+      //todo: make players unable to turn when game has ended
+      // physical.removeEventListener("click", (e: Event) => clickEvents);
     } else if (text != "-1") {
       physical.textContent = text;
       status.textContent = `Player ${ttt.players[ttt.turnIndex].symbol} turn`;
@@ -168,11 +170,12 @@ function main() {
 
   restart.addEventListener("click", (e) => {
     for (const cell of cells) {
-      cell.remove();
+      cell.textContent = "";
     }
     status.textContent = "Start the game";
-    // cells = [];
-    // main();
+    p1 = new Player("O");
+    p2 = new Player("X");
+    ttt = new TicTacToe(3, 3, [p1, p2]);
   });
 }
 
