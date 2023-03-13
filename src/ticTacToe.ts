@@ -16,11 +16,6 @@ class Player {
   }
 }
 
-// interface Cell {
-//   row: number;
-//   column: number;
-//   element: Element;
-// }
 interface TicTacToe {
   columns: number;
   rows: number;
