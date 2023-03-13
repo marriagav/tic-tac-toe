@@ -86,13 +86,14 @@ var TicTacToe = /** @class */ (function () {
             var column = [];
             for (var j = 0; j < this.columns; j++) {
                 column.push(this.board[j][i]);
-                diagonal1.push(this.board[i][i]);
-                diagonal2.push(this.board[this.rows - 1 - i][this.rows - 1 - i]);
             }
+            diagonal1.push(this.board[i][i]);
+            diagonal2.push(this.board[this.rows - 1 - i][i]);
             columnMatrix.push(column);
         }
         diagonalArray.push(diagonal1);
         diagonalArray.push(diagonal2);
+        console.log(diagonalArray);
         return [columnMatrix, diagonalArray];
     };
     TicTacToe.prototype.playerHasWon = function (player) {
@@ -100,7 +101,6 @@ var TicTacToe = /** @class */ (function () {
         this.finishGame();
     };
     TicTacToe.prototype.gameTie = function () {
-        // todo: theres been a tie
         this.finishGame();
     };
     TicTacToe.prototype.finishGame = function () {
@@ -133,19 +133,20 @@ function main() {
         _loop_1(i);
     }
     function clickEvents(e, i, j, physical) {
+        if (ttt.winner != null) {
+            return;
+        }
         var text = ttt.turn([i, j]);
         if (text.includes("t")) {
             var text2 = text.replace("t", "");
             physical.textContent = text2;
             status.textContent = "It is a tie!";
-            physical.removeEventListener("click", function (e) { return clickEvents; });
         }
         else if (text.includes("w")) {
             var text2 = text.replace("w", "");
             console.log(text2);
             physical.textContent = text2;
             status.textContent = "Player ".concat(text2, " wins!");
-            physical.removeEventListener("click", function (e) { return clickEvents; });
         }
         else if (text != "-1") {
             physical.textContent = text;
@@ -161,8 +162,6 @@ function main() {
         p1 = new Player("O");
         p2 = new Player("X");
         ttt = new TicTacToe(3, 3, [p1, p2]);
-        // cells = [];
-        // main();
     });
 }
 main();

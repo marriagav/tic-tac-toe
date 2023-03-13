@@ -105,9 +105,9 @@ class TicTacToe {
       let column: string[] = [];
       for (let j = 0; j < this.columns; j++) {
         column.push(this.board[j][i]);
-        diagonal1.push(this.board[i][i]);
-        diagonal2.push(this.board[this.rows - 1 - i][this.rows - 1 - i]);
       }
+      diagonal1.push(this.board[i][i]);
+      diagonal2.push(this.board[this.rows - 1 - i][i]);
       columnMatrix.push(column);
     }
     diagonalArray.push(diagonal1);
@@ -119,7 +119,6 @@ class TicTacToe {
     this.finishGame();
   }
   private gameTie() {
-    // todo: theres been a tie
     this.finishGame();
   }
   private finishGame() {
@@ -149,19 +148,19 @@ function main() {
   }
 
   function clickEvents(e: Event, i: number, j: number, physical: Element) {
+    if (ttt.winner != null) {
+      return;
+    }
     const text = ttt.turn([i, j]);
     if (text.includes("t")) {
       const text2 = text.replace("t", "");
       physical.textContent = text2;
       status.textContent = "It is a tie!";
-      // physical.removeEventListener("click", (e: Event) => clickEvents);
     } else if (text.includes("w")) {
       const text2 = text.replace("w", "");
       console.log(text2);
       physical.textContent = text2;
       status.textContent = `Player ${text2} wins!`;
-      //todo: make players unable to turn when game has ended
-      // physical.removeEventListener("click", (e: Event) => clickEvents);
     } else if (text != "-1") {
       physical.textContent = text;
       status.textContent = `Player ${ttt.players[ttt.turnIndex].symbol} turn`;
